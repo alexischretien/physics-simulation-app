@@ -4,9 +4,9 @@ Front-end application for [physics-simulation](https://github.com/alexischretien
 
 Provides a visual interface to manage and visualize simulation of planetary systems.
 
-<video controls src="demo.mp4" title="Title"></video>
-
 This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 19.1.5.
+
+https://github.com/user-attachments/assets/8fc8ebe3-0f5d-43df-b4b9-79f9ab98ddc9
 
 ## Development server
 
