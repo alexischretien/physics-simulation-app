@@ -1,0 +1,10 @@
+ div {
+  display: block;
+  color: white;
+  background: red;
+  border-radius: 50%;
+  font-size: 12px;
+  height: 5px;
+  width: 5px;
+  margin: 0;
+}

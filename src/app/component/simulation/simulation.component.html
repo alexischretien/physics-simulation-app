@@ -1,0 +1,150 @@
+<div class="simulation">
+  <div class="scene">
+    <div class="cube">
+      <div class="cube__face cube__face--back coordinates"></div>
+      <div class="cube__face cube__face--left coordinates"></div>
+      <div class="cube__face cube__face--bottom coordinates"></div>
+      <div class="playground">
+        @for (o of selectedSimulation.CelestialObjects; track o) {
+        <app-circle [celestialObject]="o"></app-circle>
+        }
+      </div>
+    </div>
+  </div>
+  <div class="simulation-data-table">
+    <mat-card>
+      <mat-card-header>
+        <mat-card-title>Simulation info</mat-card-title>
+        <mat-form-field>
+          <mat-label>Choose one</mat-label>
+          <mat-select>
+            @for (s of simulations; track s) {
+            <mat-option [value]="s.Id" (onSelectionChange)="selectSimulation($event)">{{s.Title}}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+      </mat-card-header>
+      @if (this.selectedSimulation.Id) {
+      <mat-card-content>
+        <div class="simulation-data">
+          <div simulation-data-info>
+            <div class="label-value">
+              <div class="label">Duration:</div>
+              <div class="value">{{scientificNotationConvertFromSelectedUnits(this.selectedSimulation.Duration, UnitType.TIME)}}</div>
+            </div>
+            <div class="label-value">
+              <div class="label">Delta time:</div>
+              <div class="value">{{scientificNotationConvertFromSelectedUnits(this.selectedSimulation.Delta_t, UnitType.TIME)}}</div>
+            </div>
+            <div class="label-value">
+              <div class="label">Writing rate:</div>
+              <div class="value">{{this.selectedSimulation.WritingRate}} iterations / data point</div>
+            </div>
+          </div>
+          <div class="units">
+            <div class="distance">
+              <div class="label">Distance unit:</div>
+              <mat-radio-group
+                class="unit-radio-group"
+                [value]="distanceUnits[0].id"
+                (ngModel)="selectedDistanceUnit"
+                (change)="onSelectedDistanceUnitChange($event.value)">
+                @for (distanceUnit of distanceUnits; track distanceUnit) {
+                  <mat-radio-button class="unit-radio-button"[value]="distanceUnit.id">{{distanceUnit.label}}</mat-radio-button>
+                }
+              </mat-radio-group>
+            </div>
+            <div class="time">
+              <div class="label">Time unit:</div>
+              <mat-radio-group
+                class="unit-radio-group" 
+                [value]="timeUnits[0].id"
+                (ngModel)="selectedTimeUnit"
+                (change)="onSelectedTimeUnitChange($event.value)">
+                @for (timeUnit of timeUnits; track timeUnit) {
+                  <mat-radio-button class="unit-radio-button" [value]="timeUnit.id">{{timeUnit.label}}</mat-radio-button>
+                }
+              </mat-radio-group>
+            </div>
+          </div>
+        </div>
+        @if (this.selectedSimulation.CelestialObjects.length) {
+        <mat-accordion>
+          @for (c of this.selectedSimulation.CelestialObjects; track c) {
+          <mat-expansion-panel>
+            <mat-expansion-panel-header>
+              <mat-panel-title>{{c.Name}}</mat-panel-title>
+              <div class="celestial-object-data">
+                <div class="row">
+                  <div class="label-value">
+                    <div class="label">Mass:</div>
+                    <div>{{scientificNotation(c.Mass)}} Kg</div>
+                  </div>
+                  <div class="label-value">
+                    <div class="label">Initial position:</div>
+                  </div>
+                  <div class="vector">
+                    <div class="label-value">
+                      <div class="label">X:</div>
+                      <div>{{scientificNotationConvertFromSelectedUnits(c.Position.X, UnitType.DISTANCE)}}</div>
+                    </div>
+                    <div class="label-value">
+                      <div class="label">Y:</div>
+                      <div>{{scientificNotationConvertFromSelectedUnits(c.Position.Y, UnitType.DISTANCE)}}</div>
+                    </div>
+                    <div class="label-value">
+                      <div class="label">Z:</div>
+                      <div>{{scientificNotationConvertFromSelectedUnits(c.Position.Z, UnitType.DISTANCE)}}</div>
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="label-value">
+                    <div class="label">Initial velocity:</div>
+                  </div>
+                  <div class="vector">
+                    <div class="label-value">
+                      <div class="label">X:</div>
+                      <div>{{scientificNotationConvertFromSelectedUnits(c.Velocity.X, UnitType.VELOCITY)}}</div>
+                    </div>
+                    <div class="label-value">
+                      <div class="label">Y:</div>
+                      <div>{{scientificNotationConvertFromSelectedUnits(c.Velocity.Y, UnitType.VELOCITY)}}</div>
+                    </div>
+                    <div class="label-value">
+                      <div class="label">Z:</div>
+                      <div>{{scientificNotationConvertFromSelectedUnits(c.Velocity.Z, UnitType.VELOCITY)}}</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </mat-expansion-panel-header>
+            <table mat-table [dataSource]="c.PositionHistory" class="mat-elevation-z8">
+              <ng-container matColumnDef="Time">
+                <th mat-header-cell *matHeaderCellDef> Time ({{this.selectedTimeUnit.symbol}}) </th>
+                <td class="align-right" mat-cell *matCellDef="let element"> {{scientificNotationConvertFromSelectedUnits(element.Time, UnitType.TIME, true)}} </td>
+              </ng-container>
+              <ng-container matColumnDef="X">
+                <th mat-header-cell *matHeaderCellDef> X ({{this.selectedDistanceUnit.symbol}}) </th>
+                <td class="align-right" mat-cell *matCellDef="let element"> {{scientificNotationConvertFromSelectedUnits(element.Position.X, UnitType.DISTANCE, true)}} </td>
+              </ng-container>
+              <ng-container matColumnDef="Y">
+                <th mat-header-cell *matHeaderCellDef>  Y ({{this.selectedDistanceUnit.symbol}}) </th>
+                <td class="align-right" mat-cell *matCellDef="let element"> {{scientificNotationConvertFromSelectedUnits(element.Position.Y, UnitType.DISTANCE, true)}} </td>
+              </ng-container>
+              <ng-container matColumnDef="Z">
+                <th mat-header-cell *matHeaderCellDef> Z ({{this.selectedDistanceUnit.symbol}}) </th>
+                <td class="align-right" mat-cell *matCellDef="let element"> {{scientificNotationConvertFromSelectedUnits(element.Position.Z, UnitType.DISTANCE, true)}} </td>
+              </ng-container>
+              <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+              <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+            </table>
+          </mat-expansion-panel>
+          }
+        </mat-accordion>
+        }
+      </mat-card-content>
+      }
+    </mat-card>
+  </div>
+</div>

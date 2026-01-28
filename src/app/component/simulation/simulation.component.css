@@ -1,0 +1,170 @@
+.coordinates {
+  background: #1d1f20;
+  background-size: 32px 32px;
+  background-position: 50%;
+  background-image:
+    linear-gradient(90deg, rgba(55, 55, 255, 0.4) 4px, transparent 0),
+    linear-gradient(180deg, rgba(55, 55, 255, 0.1) 4px, black 0);
+  border: 12px solid #2b2b2b;
+
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: sans-serif;
+}
+
+.simulation {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  margin: 0 16px 0;
+}
+
+.scene {
+  min-width: 700px;
+}
+
+.cube {
+  display: flex;
+  justify-content: center;
+  transform-style: preserve-3d;
+  perspective: 1200px;
+}
+
+
+.cube__face {
+  position: absolute;
+  width: 800px;
+  height: 800px;
+  border: 4px solid rgba(55, 55, 255, 0.4);
+  line-height: 200px;
+  font-size: 40px;
+  font-weight: bold;
+  color: white;
+  text-align: center;
+}
+
+.cube__face--back {
+  transform: translateZ(-800px) rotateY(135deg) translateZ(400px);
+}
+
+.cube__face--left {
+  transform: translateZ(-800px) rotateY(-135deg) translateZ(400px);
+}
+
+.cube__face--bottom {
+  transform: translateZ(-800px) rotateX(180deg) rotateX(90deg) rotateZ(45deg) translateZ(400px);
+}
+
+.playground {
+  padding-top: 100px;
+  min-width: 300px;
+  min-height: 300px;
+}
+
+.simulation-data-table {
+  min-width: 200px;
+
+  mat-card {
+    min-width: 670px;
+
+
+    mat-card-header {
+      display: flex;
+      justify-content: space-between;
+
+      mat-card-title {
+        padding-top: 16px;
+      }
+
+      mat-form-field {
+        min-width: 300px;
+      }
+    }
+
+    mat-card-content {
+      .simulation-data {
+        display: flex;
+        justify-content: space-between;
+        padding: 0 0 16px;
+        gap: 20px;
+
+        .units {
+          border: 1px solid rgba(107, 107, 107, 0.4);
+          border-radius: 10px;
+          padding: 10px;
+          display: flex;
+
+          .unit-radio-group {
+            display: flex;
+            flex-direction: column;
+
+          }
+        }
+      }
+
+      mat-expansion-panel-header {
+        min-height: 130px;
+
+        .celestial-object-data {
+          width: 80%;
+          display: flex;
+          justify-content: space-between;
+          gap: 16px;
+          margin: 0 10px 0;
+          align-items: end;
+
+          .label-value {
+            .label {
+              font-size: 10px;
+            }
+
+            .value {
+              font-size: 14px;
+            }
+          }
+
+          .row {
+            width: 50%;
+
+            .vector {
+              padding-left: 30px;
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+.align-right {
+  text-align: right;
+  justify-content: flex-end;
+}
+
+.label-value {
+  display: flex;
+  justify-content: space-between;
+  align-items: end;
+  gap: 16px;
+}
+
+.label {
+  font-size: 12px;
+  color: #5b5b5b;
+}
+
+.value {
+  margin-left: 8px;
+  justify-self: end;
+  font-size: 16px;
+  color: #1d1f20
+}
+
+label {
+  margin-right: 10px;
+}
