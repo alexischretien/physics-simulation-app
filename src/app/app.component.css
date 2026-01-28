@@ -1,0 +1,37 @@
+.header {
+    position: relative;
+    z-index: 3;
+    padding: 1px 100px 1px;
+    background-color: rgb(12, 23, 53);
+    color: white;
+    box-shadow: 1px 1px 5px #1a1a1a;
+
+    .title {
+        display: flex;
+        justify-self: center;
+        min-width: 1400px;
+    }
+}
+
+.page {
+    position: relative;
+    z-index: 1;
+    background-color: rgb(176, 179, 189);
+    display: flex;
+    justify-content: center;
+    min-width: 100%;
+    min-height: 100%;
+
+
+}
+
+.body {
+    position: relative;
+    z-index: 2;
+    padding: 16px 0 0 0;
+    display: flex;
+    justify-self: center;
+    max-width: 100%;
+    background-color: #c9c7ce;
+    box-shadow: 1px 1px 15px #373738;
+}
