@@ -1,4 +1,4 @@
- div {
+ .circle {
   display: block;
   color: white;
   background: red;
@@ -7,4 +7,9 @@
   height: 5px;
   width: 5px;
   margin: 0;
+
+  .name {
+    padding: 2px 0 0 2px;
+    text-wrap: nowrap;
+  }
 }

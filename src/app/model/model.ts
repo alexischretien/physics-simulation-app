@@ -1,36 +1,36 @@
 export class Vector {
-  X: number = 0
-  Y: number = 0
-  Z: number = 0
+  x: number = 0
+  y: number = 0
+  z: number = 0
 }
 
 export class Simulation {
-    Id: number = 0
-    Title: string = ""
-    Duration: number = 0
-    Delta_t: number = 0
-    WritingRate: number = 0
-    IsDirty: boolean = false
-    CelestialObjects: CelestialObject[] = []
+    id: number = 0
+    title: string = ""
+    duration: number = 0
+    delta_t: number = 0
+    writingRate: number = 0
+    isDirty: boolean = false
+    celestialObjects: CelestialObject[] = []
 } 
 
 export class CelestialObject {
-    Id: number = 0
-    SimulationId: number = 0
-    Name: string = ""
-    Mass: number = 0
-    Position: Vector = {X: 0, Y: 0, Z: 0}
-    Velocity: Vector = {X: 0, Y: 0, Z: 0}
-    Acceleration: Vector = {X: 0, Y: 0, Z: 0}
-    PositionHistory: PositionHistory[] = []
+    id: number = 0
+    simulationId: number = 0
+    name: string = ""
+    mass: number = 0
+    position: Vector = {x: 0, y: 0, z: 0}
+    velocity: Vector = {x: 0, y: 0, z: 0}
+    acceleration: Vector = {x: 0, y: 0, z: 0}
+    positionHistory: PositionHistory[] = []
 }
 
 export class PositionHistory {
-    Id: number = 0
-    CelestialObjectId: number = 0
-    Time: number = 0
-    Position: Vector = {X: 0, Y: 0, Z: 0}
-    normalizedPosition: Vector = {X: 0, Y: 0, Z: 0}
+    id?: number
+    celestialObjectId?: number
+    time: number = 0
+    position: Vector = {x: 0, y: 0, z: 0}
+    normalizedPosition?: Vector
 }
 
 export enum UnitType {

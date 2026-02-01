@@ -7,6 +7,10 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatTableModule } from '@angular/material/table'
 import { MatRadioModule } from '@angular/material/radio';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatDividerModule } from '@angular/material/divider';
+
 
 const SCENE_SCALE = 400
 const SUPERSCRIPT_ARRAY = [['0','⁰'],['1','¹'],['2','²'],['3','³'],['4','⁴'],['5','⁵'],
@@ -14,7 +18,8 @@ const SUPERSCRIPT_ARRAY = [['0','⁰'],['1','¹'],['2','²'],['3','³'],['4','�
 
 @Component({
   selector: 'app-simulation',
-  imports: [CircleComponent, MatCard, MatCardHeader, MatCardTitle, MatCardContent, MatSelectModule, MatExpansionModule, MatTableModule, MatRadioModule],
+  imports: [CircleComponent, MatCard, MatCardHeader, MatCardTitle, MatCardContent, MatSelectModule, 
+    MatExpansionModule, MatTableModule, MatRadioModule, MatButtonModule, MatIconModule, MatDividerModule],
   templateUrl: './simulation.component.html',
   styleUrl: './simulation.component.css',
 })
@@ -66,7 +71,7 @@ export class SimulationComponent {
     if(event.isUserInput) {
       this.apiService.getSimulationByIdNested(event.source.value).subscribe( {
         next: (simulation) => {
-          this.selectedSimulation =  this.normalizeSimulationData(simulation)
+          this.selectedSimulation = this.normalizeSimulationData(simulation)
         } 
         ,
         error: (error) => {
@@ -80,21 +85,26 @@ export class SimulationComponent {
   }
 
   normalizeSimulationData(simulation: Simulation): Simulation {
-    let max = this.findMaxPositionValues(simulation.CelestialObjects);
-    let min = this.findMinPositionValues(simulation.CelestialObjects);
+    if (simulation.celestialObjects?.length > 0) {
+      if (simulation.isDirty) {
+        simulation.celestialObjects.forEach(c => c.positionHistory = [{time: 0, position: {x: c.position.x, y: c.position.y, z: c.position.z}}])
+      }
+      let max = this.findMaxPositionValues(simulation.celestialObjects);
+      let min = this.findMinPositionValues(simulation.celestialObjects);
 
-    let rangeMinMax: Vector = {X: Math.abs(max.X - min.X), Y: Math.abs(max.Y - min.Y), Z: Math.abs(max.Z - min.Z)}
-    
-    simulation.CelestialObjects.sort((a, b) => a.Id - b.Id)
+      let rangeMinMax: Vector = {x: Math.abs(max.x - min.x), y: Math.abs(max.y - min.y), z: Math.abs(max.z - min.z)}
+      
+      simulation.celestialObjects.sort((a, b) => a.id - b.id)
 
-    for (let i of simulation.CelestialObjects) {
-      i.PositionHistory.sort((a, b) => a.Time - b.Time)
+      for (let i of simulation.celestialObjects) {
+        i.positionHistory.sort((a, b) => a.time - b.time)
 
-      for (let j of i.PositionHistory) {
-        j.normalizedPosition = {
-          X: (j.Position.X - min.X) * SCENE_SCALE / rangeMinMax.X, 
-          Y: (j.Position.Y - min.Y) * SCENE_SCALE / rangeMinMax.Y, 
-          Z: (j.Position.Z - min.Z) * SCENE_SCALE / rangeMinMax.Z
+        for (let j of i.positionHistory) {
+          j.normalizedPosition = {
+            x: (j.position.x - min.x) * SCENE_SCALE / rangeMinMax.x, 
+            y: (j.position.y - min.y) * SCENE_SCALE / rangeMinMax.y, 
+            z: (j.position.z - min.z) * SCENE_SCALE / rangeMinMax.z
+          }
         }
       }
     }
@@ -102,24 +112,24 @@ export class SimulationComponent {
   }
 
   findMaxPositionValues(celestialObject: CelestialObject[]): Vector {
-    let max: Vector = {X: Number.MIN_VALUE, Y: Number.MIN_VALUE, Z: Number.MIN_VALUE};
+    let max: Vector = {x: Number.MIN_VALUE, y: Number.MIN_VALUE, z: Number.MIN_VALUE};
     for (let i of celestialObject) {
-      for (let j of i.PositionHistory) {
-        if (j.Position.X && max.X && j.Position.X > max.X) max.X = j.Position.X
-        if (j.Position.Y && max.Y && j.Position.Y > max.Y) max.Y = j.Position.Y
-        if (j.Position.Z && max.Z && j.Position.Z > max.Z) max.Z = j.Position.Z
+      for (let j of i.positionHistory) {
+        if (j.position.x && max.x && j.position.x > max.x) max.x = j.position.x
+        if (j.position.y && max.y && j.position.y > max.y) max.y = j.position.y
+        if (j.position.z && max.z && j.position.z > max.z) max.z = j.position.z
       }
     }
     return max
   }
 
   findMinPositionValues(celestialObject: CelestialObject[]): Vector {
-    let min: Vector = {X: Number.MAX_VALUE, Y: Number.MAX_VALUE, Z: Number.MAX_VALUE};
+    let min: Vector = {x: Number.MAX_VALUE, y: Number.MAX_VALUE, z: Number.MAX_VALUE};
     for (let i of celestialObject) {
-      for (let j of i.PositionHistory) {
-        if (j.Position.X && min.X && j.Position.X < min.X) min.X = j.Position.X
-        if (j.Position.Y && min.Y && j.Position.Y < min.Y) min.Y = j.Position.Y
-        if (j.Position.Z && min.Z && j.Position.Z < min.Z) min.Z = j.Position.Z
+      for (let j of i.positionHistory) {
+        if (j.position.x && min.x && j.position.x < min.x) min.x = j.position.x
+        if (j.position.y && min.y && j.position.y < min.y) min.y = j.position.y
+        if (j.position.z && min.z && j.position.z < min.z) min.z = j.position.z
       }
     }
     return min
