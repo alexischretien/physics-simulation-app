@@ -14,9 +14,9 @@
   <div class="simulation-data-table">
     <mat-card>
       <mat-card-header>
-        <mat-card-title>Simulation info</mat-card-title>
+        <mat-card-title>{{'simulation.simulationInfo' | translate}}</mat-card-title>
         <mat-form-field>
-          <mat-label>Choose one</mat-label>
+          <mat-label>{{'simulation.chooseOne' | translate}}</mat-label>
           <mat-select>
             @for (s of simulations; track s) {
             <mat-option [value]="s.id" (onSelectionChange)="selectSimulation($event)">{{s.title}}</mat-option>
@@ -29,45 +29,45 @@
         <div class="simulation-data">
           <div simulation-data-info>
             <div class="label-value">
-              <div class="label">Duration:</div>
+              <div class="label">{{'simulation.duration' | translate}}:</div>
               <div class="value">{{scientificNotationConvertFromSelectedUnits(this.selectedSimulation.duration, UnitType.TIME)}}</div>
             </div>
             <div class="label-value">
-              <div class="label">Delta time:</div>
+              <div class="label">{{'simulation.deltaTime' | translate}}:</div>
               <div class="value">{{scientificNotationConvertFromSelectedUnits(this.selectedSimulation.delta_t, UnitType.TIME)}}</div>
             </div>
             <div class="label-value">
-              <div class="label">Writing rate:</div>
-              <div class="value">{{this.selectedSimulation.writingRate}} iterations / data point</div>
+              <div class="label">{{'simulation.writingRate' | translate}}:</div>
+              <div class="value">{{this.selectedSimulation.writingRate}} {{'simulation.iterationPerDataPoint' | translate}}</div>
             </div>
             <div class="action-buttons">
-              <button mat-flat-button disabled="{{!this.selectedSimulation.isDirty}}">Run</button>
-              <button mat-stroked-button>Edit</button>
-              <button mat-stroked-button>New</button>
+              <button mat-flat-button disabled="{{!this.selectedSimulation.isDirty}}">{{'simulation.button.run' | translate}}</button>
+              <button mat-stroked-button>{{'simulation.button.edit' | translate}}</button>
+              <button mat-stroked-button>{{'simulation.button.new' | translate}}</button>
             </div>
           </div>
           <div class="units">
             <div class="distance">
-              <div class="label">Distance unit:</div>
+              <div class="label">{{'simulation.unit.distanceUnit' | translate}}:</div>
               <mat-radio-group
                 class="unit-radio-group"
                 [value]="distanceUnits[0].id"
                 (ngModel)="selectedDistanceUnit"
                 (change)="onSelectedDistanceUnitChange($event.value)">
                 @for (distanceUnit of distanceUnits; track distanceUnit) {
-                  <mat-radio-button class="unit-radio-button"[value]="distanceUnit.id">{{distanceUnit.label}}</mat-radio-button>
+                  <mat-radio-button class="unit-radio-button"[value]="distanceUnit.id">{{(distanceUnit.i18n + '.label') | translate}}</mat-radio-button>
                 }
               </mat-radio-group>
             </div>
             <div class="time">
-              <div class="label">Time unit:</div>
+              <div class="label">{{'simulation.unit.timeUnit' | translate}}:</div>
               <mat-radio-group
                 class="unit-radio-group" 
                 [value]="timeUnits[0].id"
                 (ngModel)="selectedTimeUnit"
                 (change)="onSelectedTimeUnitChange($event.value)">
                 @for (timeUnit of timeUnits; track timeUnit) {
-                  <mat-radio-button class="unit-radio-button" [value]="timeUnit.id">{{timeUnit.label}}</mat-radio-button>
+                  <mat-radio-button class="unit-radio-button" [value]="timeUnit.id">{{(timeUnit.i18n + '.label') | translate}}</mat-radio-button>
                 }
               </mat-radio-group>
             </div>
@@ -82,11 +82,11 @@
               <div class="celestial-object-data">
                 <div class="row">
                   <div class="label-value">
-                    <div class="label">Mass:</div>
+                    <div class="label">{{'simulation.celestialObject.mass' | translate}}:</div>
                     <div>{{scientificNotation(c.mass)}} Kg</div>
                   </div>
                   <div class="label-value">
-                    <div class="label">Initial position:</div>
+                    <div class="label">{{'simulation.celestialObject.initialPosition' | translate}}:</div>
                   </div>
                   <div class="vector">
                     <div class="label-value">
@@ -105,7 +105,7 @@
                 </div>
                 <div class="row">
                   <div class="label-value">
-                    <div class="label">Initial velocity:</div>
+                    <div class="label">{{'simulation.celestialObject.initialVelocity' | translate}}:</div>
                   </div>
                   <div class="vector">
                     <div class="label-value">
@@ -126,19 +126,19 @@
             </mat-expansion-panel-header>
             <table mat-table [dataSource]="c.positionHistory" class="mat-elevation-z8">
               <ng-container matColumnDef="Time">
-                <th mat-header-cell *matHeaderCellDef> Time ({{this.selectedTimeUnit.symbol}}) </th>
+                <th mat-header-cell *matHeaderCellDef> {{'simulation.time' | translate}} ({{(this.selectedTimeUnit.i18n + '.symbol') | translate}}) </th>
                 <td class="align-right" mat-cell *matCellDef="let element"> {{scientificNotationConvertFromSelectedUnits(element.time, UnitType.TIME, true)}} </td>
               </ng-container>
               <ng-container matColumnDef="X">
-                <th mat-header-cell *matHeaderCellDef> X ({{this.selectedDistanceUnit.symbol}}) </th>
+                <th mat-header-cell *matHeaderCellDef> X ({{(this.selectedDistanceUnit.i18n + '.symbol') | translate}}) </th>
                 <td class="align-right" mat-cell *matCellDef="let element"> {{scientificNotationConvertFromSelectedUnits(element.position.x, UnitType.DISTANCE, true)}} </td>
               </ng-container>
               <ng-container matColumnDef="Y">
-                <th mat-header-cell *matHeaderCellDef>  Y ({{this.selectedDistanceUnit.symbol}}) </th>
+                <th mat-header-cell *matHeaderCellDef>  Y ({{(this.selectedDistanceUnit.i18n + '.symbol') | translate}}) </th>
                 <td class="align-right" mat-cell *matCellDef="let element"> {{scientificNotationConvertFromSelectedUnits(element.position.y, UnitType.DISTANCE, true)}} </td>
               </ng-container>
               <ng-container matColumnDef="Z">
-                <th mat-header-cell *matHeaderCellDef> Z ({{this.selectedDistanceUnit.symbol}}) </th>
+                <th mat-header-cell *matHeaderCellDef> Z ({{(this.selectedDistanceUnit.i18n + '.symbol') | translate}}) </th>
                 <td class="align-right" mat-cell *matCellDef="let element"> {{scientificNotationConvertFromSelectedUnits(element.position.z, UnitType.DISTANCE, true)}} </td>
               </ng-container>
               <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>

@@ -1,0 +1,54 @@
+{
+    "appName": "Visualiseur de Systèmes planétaires",
+    "simulation": {
+        "simulationInfo": "Info de la simulation",
+        "chooseOne": "Choisisez un",
+        "duration": "Duration",
+        "deltaTime": "Temps delta",
+        "writingRate": "Taux d'écriture",
+        "time": "Temps",
+        "iterationPerDataPoint": "itération(s) / point de données",
+        "button": {
+            "run": "Exécuter",
+            "edit": "Éditer",
+            "new": "Nouveau"
+        },
+        "unit": {
+            "distanceUnit": "Unité de distance",
+            "timeUnit": "Unité de temps",
+            "metre": {
+                "label": "Mètre (m)",
+                "symbol": "m"
+            },
+            "kilometre": {
+                "label": "Kilomètre (km)",
+                "symbol": "km"
+            },
+            "astronomicalUnit": {
+                "label": "Unité astronomique (au)",
+                "symbol": "au"
+            },
+            "second": {
+                "label": "Seconde (s)",
+                "symbol": "s"
+            },
+            "hour": {
+                "label": "Heure (h)",
+                "symbol": "h"
+            },
+            "day": {
+                "label": "Jour",
+                "symbol": "jour"
+            },
+            "year": {
+                "label": "Année",
+                "symbol": "année"
+            }
+        },
+        "celestialObject": {
+            "mass": "Masse",
+            "initialPosition": "Position initiale",
+            "initialVelocity": "Vélocity initiale"
+        }
+    }
+}

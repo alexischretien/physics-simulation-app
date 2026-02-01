@@ -10,6 +10,8 @@ import { MatRadioModule } from '@angular/material/radio';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatDividerModule } from '@angular/material/divider';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
+
 
 
 const SCENE_SCALE = 400
@@ -19,7 +21,7 @@ const SUPERSCRIPT_ARRAY = [['0','⁰'],['1','¹'],['2','²'],['3','³'],['4','�
 @Component({
   selector: 'app-simulation',
   imports: [CircleComponent, MatCard, MatCardHeader, MatCardTitle, MatCardContent, MatSelectModule, 
-    MatExpansionModule, MatTableModule, MatRadioModule, MatButtonModule, MatIconModule, MatDividerModule],
+    MatExpansionModule, MatTableModule, MatRadioModule, MatButtonModule, MatIconModule, MatDividerModule, TranslateModule],
   templateUrl: './simulation.component.html',
   styleUrl: './simulation.component.css',
 })
@@ -28,15 +30,15 @@ export class SimulationComponent {
 
   displayedColumns: string[] = ["Time", "X", "Y", "Z"]
   distanceUnits = [
-    {id: 0, label: "Metre (m)", symbol: "m", conversionRate: 1}, 
-    {id: 1, label: "Kilometre (km)", symbol: "km", conversionRate: 1000}, 
-    {id: 2, label: "Astronomical unit (AU)", symbol: "AU", conversionRate: 149597870700},
+    {id: 0, i18n: "simulation.unit.metre", conversionRate: 1}, 
+    {id: 1, i18n: "simulation.unit.kilometre", conversionRate: 1000}, 
+    {id: 2, i18n: "simulation.unit.astronomicalUnit", conversionRate: 149597870700},
   ]
   timeUnits = [
-    {id: 0, label: "Second (s)", symbol: "s", conversionRate: 1}, 
-    {id: 1, label: "Hour (h)", symbol: "h", conversionRate: 3600}, 
-    {id: 2, label: "Day", symbol: "day", conversionRate: 86400}, 
-    {id: 3, label: "Year", symbol: "year", conversionRate: 31556736}, 
+    {id: 0, i18n: "simulation.unit.second", conversionRate: 1}, 
+    {id: 1, i18n: "simulation.unit.hour", conversionRate: 3600}, 
+    {id: 2, i18n: "simulation.unit.day", conversionRate: 86400}, 
+    {id: 3, i18n: "simulation.unit.year", conversionRate: 31556736}, 
   ]
 
   simulations!: Simulation[]
@@ -46,7 +48,7 @@ export class SimulationComponent {
   UnitType = UnitType;
 
   private apiService = inject(ApiService)
-
+  private translateService = inject(TranslateService)
   constructor() {
   }
 
@@ -168,10 +170,14 @@ export class SimulationComponent {
 
   getSelectedUnitSymbol(unitType: UnitType): string {
     switch (unitType) {
-      case UnitType.TIME: return this.selectedTimeUnit.symbol;
-      case UnitType.DISTANCE: return this.selectedDistanceUnit.symbol;
-      case UnitType.VELOCITY: return this.selectedDistanceUnit.symbol + "/" + this.selectedTimeUnit.symbol;
+      case UnitType.TIME: return this.getSymbol(this.selectedTimeUnit);
+      case UnitType.DISTANCE: return this.getSymbol(this.selectedDistanceUnit);
+      case UnitType.VELOCITY: return this.getSymbol(this.selectedDistanceUnit) + "/" + this.getSymbol(this.selectedTimeUnit);
     }
+  }
+
+  getSymbol(unit: any): string {
+    return this.translateService.instant(unit.i18n + '.symbol')
   }
 
   onSelectedDistanceUnitChange(value: any) {

@@ -5,11 +5,19 @@
     background-color: rgb(12, 23, 53);
     color: white;
     box-shadow: 1px 1px 5px #1a1a1a;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 
-    .title {
-        display: flex;
-        justify-self: center;
-        min-width: 1400px;
+    .language {
+        .mat-mdc-button[disabled], .mat-mdc-button.mat-mdc-button-disabled {
+            color: rgb(255, 255, 255);
+            padding: 0px;
+        }
+        .mat-mdc-button:not(:disabled) {
+            color: rgb(104, 111, 119);
+            padding: 0px;
+        }
     }
 }
 
@@ -21,8 +29,6 @@
     justify-content: center;
     min-width: 100%;
     min-height: 100%;
-
-
 }
 
 .body {

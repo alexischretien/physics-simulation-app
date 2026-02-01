@@ -1,0 +1,54 @@
+{
+    "appName": "Planetary System Visualizer",
+    "simulation": {
+        "simulationInfo": "Simulation info",
+        "chooseOne": "Choose one",
+        "duration": "Duration",
+        "deltaTime": "Delta time",
+        "writingRate": "Writing rate",
+        "time": "Time",
+        "iterationPerDataPoint": "iteration(s) / data point",
+        "button": {
+            "run": "Run",
+            "edit": "Edit",
+            "new": "New"
+        },
+        "unit": {
+            "distanceUnit": "Distance unit",
+            "timeUnit": "Time unit",
+            "metre": {
+                "label": "Metre (m)",
+                "symbol": "m"
+            },
+            "kilometre": {
+                "label": "Kilometre (km)",
+                "symbol": "km"
+            },
+            "astronomicalUnit": {
+                "label": "Astronomical unit (au)",
+                "symbol": "au"
+            },
+            "second": {
+                "label": "Second (s)",
+                "symbol": "s"
+            },
+            "hour": {
+                "label": "Hour (h)",
+                "symbol": "h"
+            },
+            "day": {
+                "label": "Day",
+                "symbol": "day"
+            },
+            "year": {
+                "label": "Year",
+                "symbol": "year"
+            }
+        },
+        "celestialObject": {
+            "mass": "Mass",
+            "initialPosition": "Initial position",
+            "initialVelocity": "Initial velocity"
+        }
+    }
+}
