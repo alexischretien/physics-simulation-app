@@ -2,6 +2,7 @@
     "appName": "Visualiseur de Systèmes planétaires",
     "simulation": {
         "simulationInfo": "Info de la simulation",
+        "title": "Titre",
         "chooseOne": "Choisisez un",
         "duration": "Duration",
         "deltaTime": "Temps delta",
@@ -11,7 +12,9 @@
         "button": {
             "run": "Exécuter",
             "edit": "Éditer",
-            "new": "Nouveau"
+            "new": "Nouveau",
+            "cancel": "Annuler",
+            "save": "Sauvegarder"
         },
         "unit": {
             "distanceUnit": "Unité de distance",
@@ -46,6 +49,7 @@
             }
         },
         "celestialObject": {
+            "name": "Nom",
             "mass": "Masse",
             "initialPosition": "Position initiale",
             "initialVelocity": "Vélocity initiale"

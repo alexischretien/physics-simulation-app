@@ -11,6 +11,9 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatDividerModule } from '@angular/material/divider';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { FormsModule } from '@angular/forms';
+import { AppService } from '../../service/app-service';
 
 
 
@@ -20,8 +23,9 @@ const SUPERSCRIPT_ARRAY = [['0','⁰'],['1','¹'],['2','²'],['3','³'],['4','�
 
 @Component({
   selector: 'app-simulation',
-  imports: [CircleComponent, MatCard, MatCardHeader, MatCardTitle, MatCardContent, MatSelectModule, 
-    MatExpansionModule, MatTableModule, MatRadioModule, MatButtonModule, MatIconModule, MatDividerModule, TranslateModule],
+  imports: [CircleComponent, MatCard, MatCardHeader, MatCardTitle, MatCardContent, MatSelectModule, FormsModule,
+    MatExpansionModule, MatTableModule, MatRadioModule, MatButtonModule, MatIconModule, MatDividerModule, 
+    TranslateModule, MatDialogModule],
   templateUrl: './simulation.component.html',
   styleUrl: './simulation.component.css',
 })
@@ -43,18 +47,30 @@ export class SimulationComponent {
 
   simulations!: Simulation[]
   selectedSimulation: Simulation = new Simulation()
-  selectedDistanceUnit: any;
-  selectedTimeUnit: any;
-  UnitType = UnitType;
+  createModifySimulation: Simulation = new Simulation()
+  selectedDistanceUnit: any
+  selectedTimeUnit: any
+  UnitType = UnitType
+  isCreateMode = false
+  isModifyMode = false
 
   private apiService = inject(ApiService)
+  private appService = inject(AppService)
   private translateService = inject(TranslateService)
+  readonly dialog = inject(MatDialog);
+  
   constructor() {
   }
 
   ngOnInit(): void {
     this.selectedDistanceUnit = this.distanceUnits[0]
     this.selectedTimeUnit = this.timeUnits[0]
+    this.isCreateMode = false
+    this.isModifyMode = false
+    this.populateSimulationDropdown()
+  }
+
+  populateSimulationDropdown() {
       this.apiService.getSimulations().subscribe( {
       next: (simulations) => {
           this.simulations = simulations as Simulation[]
@@ -63,27 +79,29 @@ export class SimulationComponent {
       error: (error) => {
         this.selectedSimulation = new Simulation()
         console.error(error);
-      },
-      complete: () => {
       }
     });
   }
 
   selectSimulation(event: any) {
     if(event.isUserInput) {
-      this.apiService.getSimulationByIdNested(event.source.value).subscribe( {
-        next: (simulation) => {
-          this.selectedSimulation = this.normalizeSimulationData(simulation)
-        } 
-        ,
-        error: (error) => {
-          this.selectedSimulation = new Simulation()
-          console.error(error);
-        },
-        complete: () => {
-        }
-      });
+      this.selectSimulationById(event.source.value)
     }
+  }
+
+  selectSimulationById(id: number) {
+    this.apiService.getSimulationByIdNested(id).subscribe( {
+      next: (simulation) => {
+        this.selectedSimulation = this.normalizeSimulationData(simulation)
+      } 
+      ,
+      error: (error) => {
+        this.selectedSimulation = new Simulation()
+        console.error(error);
+      }
+    });
+    this.isCreateMode = false
+    this.isModifyMode = false
   }
 
   normalizeSimulationData(simulation: Simulation): Simulation {
@@ -95,7 +113,8 @@ export class SimulationComponent {
       let min = this.findMinPositionValues(simulation.celestialObjects);
 
       let rangeMinMax: Vector = {x: Math.abs(max.x - min.x), y: Math.abs(max.y - min.y), z: Math.abs(max.z - min.z)}
-      
+      let sceneAjustementCoefficient = SCENE_SCALE / Math.max(rangeMinMax.x, rangeMinMax.y, rangeMinMax.z)
+
       simulation.celestialObjects.sort((a, b) => a.id - b.id)
 
       for (let i of simulation.celestialObjects) {
@@ -103,9 +122,9 @@ export class SimulationComponent {
 
         for (let j of i.positionHistory) {
           j.normalizedPosition = {
-            x: (j.position.x - min.x) * SCENE_SCALE / rangeMinMax.x, 
-            y: (j.position.y - min.y) * SCENE_SCALE / rangeMinMax.y, 
-            z: (j.position.z - min.z) * SCENE_SCALE / rangeMinMax.z
+            x: (j.position.x - min.x) * sceneAjustementCoefficient, 
+            y: (j.position.y - min.y) * sceneAjustementCoefficient, 
+            z: (j.position.z - min.z) * sceneAjustementCoefficient
           }
         }
       }
@@ -117,9 +136,9 @@ export class SimulationComponent {
     let max: Vector = {x: Number.MIN_VALUE, y: Number.MIN_VALUE, z: Number.MIN_VALUE};
     for (let i of celestialObject) {
       for (let j of i.positionHistory) {
-        if (j.position.x && max.x && j.position.x > max.x) max.x = j.position.x
-        if (j.position.y && max.y && j.position.y > max.y) max.y = j.position.y
-        if (j.position.z && max.z && j.position.z > max.z) max.z = j.position.z
+        if (j.position.x > max.x) max.x = j.position.x
+        if (j.position.y > max.y) max.y = j.position.y
+        if (j.position.z > max.z) max.z = j.position.z
       }
     }
     return max
@@ -129,9 +148,9 @@ export class SimulationComponent {
     let min: Vector = {x: Number.MAX_VALUE, y: Number.MAX_VALUE, z: Number.MAX_VALUE};
     for (let i of celestialObject) {
       for (let j of i.positionHistory) {
-        if (j.position.x && min.x && j.position.x < min.x) min.x = j.position.x
-        if (j.position.y && min.y && j.position.y < min.y) min.y = j.position.y
-        if (j.position.z && min.z && j.position.z < min.z) min.z = j.position.z
+        if (j.position.x < min.x) min.x = j.position.x
+        if (j.position.y < min.y) min.y = j.position.y
+        if (j.position.z < min.z) min.z = j.position.z
       }
     }
     return min
@@ -187,6 +206,68 @@ export class SimulationComponent {
   onSelectedTimeUnitChange(value: any) {
     this.selectedTimeUnit = this.timeUnits[value]
   }
-}
 
+  onClickNewEdit(isCreate: boolean) {
+    this.createModifySimulation = isCreate ? new Simulation() : this.newDirtySimulation(this.selectedSimulation)
+    this.createModifySimulation.celestialObjects
+    this.isCreateMode = isCreate
+    this.isModifyMode = !isCreate
+   // this.appService.destroySimulationAnimation()
+  }
+
+  cancelCreateModify() {
+    this.isCreateMode = false
+    this.isModifyMode = false
+  }
+
+  newDirtySimulation(simulation: Simulation): Simulation {
+    let sim = structuredClone(simulation)
+    sim.isDirty = true
+    sim = this.normalizeSimulationData(sim)
+    return sim
+  }
+
+  isSaveDisabled(): boolean {
+    //TODO
+    return false;
+  }
+
+  isEditionMode(): boolean {
+    return this.isCreateMode || this.isModifyMode
+  }
+
+  saveSimulation(isCreate: boolean) {
+    if (!this.isSaveDisabled()) {
+      if (isCreate) {
+        this.apiService.postSimulation(this.createModifySimulation).subscribe({
+          next: (simulation) => {
+            this.onSuccessfulSave(simulation.id)
+          },
+          error: (error) => {
+            this.selectedSimulation = new Simulation()
+            console.error(error);
+          }
+        });
+      } else {
+        this.apiService.patchSimulation(this.createModifySimulation).subscribe({
+          next: (simulation) => {
+            this.onSuccessfulSave(simulation.id)
+          } ,
+          error: (error) => {
+            this.selectedSimulation = new Simulation()
+            console.error(error);
+          }
+        });
+      }
+    }
+  }
+
+  onSuccessfulSave(id: number) {
+    this.populateSimulationDropdown()
+    this.selectSimulationById(id)
+    this.isCreateMode = false
+    this.isModifyMode = false
+  }
+
+}
 export { UnitType };

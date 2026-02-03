@@ -19,13 +19,16 @@ body {
 
 .simulation {
   display: flex;
+  flex-flow: row wrap;
   justify-content: center;
   gap: 20px;
   margin: 0 16px 0;
 }
 
 .scene {
-  min-width: 700px;
+  min-width: 670px;
+  min-height: 700px;
+  flex-basis: 40%;
 }
 
 .cube {
@@ -68,17 +71,20 @@ body {
 
 .simulation-data-table {
   min-width: 200px;
+  flex-grow: 1;
+  flex-shrink: 1;
+
+  mat-form-field {
+    padding-left: 16px;
+  }
 
   mat-card {
-    min-width: 670px;
-
-
     mat-card-header {
       display: flex;
       justify-content: space-between;
 
       mat-card-title {
-        padding-top: 16px;
+        padding: 16px 0 20px;
       }
 
       mat-form-field {
@@ -89,15 +95,21 @@ body {
     mat-card-content {
       .simulation-data {
         display: flex;
+        flex-flow: row wrap;
         justify-content: space-between;
         padding: 0 0 16px;
         gap: 20px;
 
+        .simulation-data-info {
+          flex-shrink: 1;
+        }
+
         .units {
+          display: flex;
+          flex-shrink: 1;
           border: 1px solid rgba(107, 107, 107, 0.4);
           border-radius: 10px;
           padding: 10px;
-          display: flex;
 
           .unit-radio-group {
             display: flex;
@@ -105,23 +117,57 @@ body {
 
           }
         }
-        .action-buttons {
-            padding: 10px 0 10px;
-            display: flex;
-            gap: 10px;
+
+        .label {
+          width: 85px;
+        }
+
+        .value {
+          width: 250px;
+          text-align: end;
+        }
+
+        .simulation-input-field {
+          display: flex;
+          width: 250px;
+          margin-left: 8px;
+
+          input {
+            flex: 1;
+            width: 100%;
+            font-size: 16px;
+            text-align: end;
           }
+
+          .unit {
+            padding-left: 4px;
+            white-space: nowrap;
+          }
+        }
+
+        .action-buttons {
+          padding: 10px 0 10px;
+          display: flex;
+          gap: 10px;
+        }
       }
 
       mat-expansion-panel-header {
         min-height: 130px;
 
         .celestial-object-data {
-          width: 80%;
           display: flex;
-          justify-content: space-between;
+          flex-flow: row wrap;
           gap: 16px;
           margin: 0 10px 0;
           align-items: end;
+
+          .celestial-object-input-field {
+            input {
+              margin-right: 4px;
+              max-width: 250px;
+            }
+          }
 
           .label-value {
             .label {
@@ -134,10 +180,27 @@ body {
           }
 
           .row {
-            width: 50%;
+            flex-grow: 1;
 
             .vector {
               padding-left: 30px;
+            }
+          }
+
+          .celestial-object-input-field {
+            display: flex;
+            width: 100%;
+
+            input {
+              flex: 1;
+              width: 100%;
+              font-size: 16px;
+              text-align: end;
+            }
+
+            .unit {
+              padding-left: 1px;
+              white-space: nowrap;
             }
           }
         }
@@ -158,9 +221,18 @@ body {
   gap: 16px;
 }
 
+.celestial-object-name {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+
+}
+
 .label {
   font-size: 12px;
   color: #5b5b5b;
+  white-space: nowrap;
+
 }
 
 .value {

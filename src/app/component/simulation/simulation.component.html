@@ -1,12 +1,14 @@
 <div class="simulation">
+  {{selectedSimulation.isDirty}}
   <div class="scene">
     <div class="cube">
       <div class="cube__face cube__face--back coordinates"></div>
       <div class="cube__face cube__face--left coordinates"></div>
       <div class="cube__face cube__face--bottom coordinates"></div>
       <div class="playground">
-        @for (o of selectedSimulation.celestialObjects; track o) {
-        <app-circle [celestialObject]="o"></app-circle>
+        @for (o of isEditionMode() ? createModifySimulation.celestialObjects : selectedSimulation.celestialObjects;
+        track o) {
+        <app-circle [celestialObject]="o" [isAnimationPaused]="(isEditionMode() || selectedSimulation.isDirty)"></app-circle>
         }
       </div>
     </div>
@@ -17,73 +19,132 @@
         <mat-card-title>{{'simulation.simulationInfo' | translate}}</mat-card-title>
         <mat-form-field>
           <mat-label>{{'simulation.chooseOne' | translate}}</mat-label>
-          <mat-select>
+          <mat-select [(ngModel)]="selectedSimulation.id">
             @for (s of simulations; track s) {
             <mat-option [value]="s.id" (onSelectionChange)="selectSimulation($event)">{{s.title}}</mat-option>
             }
           </mat-select>
         </mat-form-field>
+
       </mat-card-header>
-      @if (this.selectedSimulation.id) {
+      @if (selectedSimulation.id) {
       <mat-card-content>
         <div class="simulation-data">
-          <div simulation-data-info>
+          <div class="simulation-data-info">
+            <div class="label-value">
+              <div class="label">{{'simulation.title' | translate}}:</div>
+              @if (!isEditionMode()) {
+                <div class="value">{{selectedSimulation.title}}</div>
+              } @else {
+              <div class="simulation-input-field">
+                <input type="string" [(ngModel)]="createModifySimulation.title">
+              </div>
+              }
+            </div>
             <div class="label-value">
               <div class="label">{{'simulation.duration' | translate}}:</div>
-              <div class="value">{{scientificNotationConvertFromSelectedUnits(this.selectedSimulation.duration, UnitType.TIME)}}</div>
+              @if (!this.isEditionMode()) {
+              <div class="value">{{scientificNotationConvertFromSelectedUnits(selectedSimulation.duration,
+                UnitType.TIME)}}</div>
+              } @else {
+              <div class="simulation-input-field">
+                <input type="number" [(ngModel)]="createModifySimulation.duration">
+                <div class="unit">{{getSelectedUnitSymbol(UnitType.TIME)}}</div>
+              </div>
+              }
             </div>
             <div class="label-value">
               <div class="label">{{'simulation.deltaTime' | translate}}:</div>
-              <div class="value">{{scientificNotationConvertFromSelectedUnits(this.selectedSimulation.delta_t, UnitType.TIME)}}</div>
+              @if (!isEditionMode()) {
+              <div class="value">{{scientificNotationConvertFromSelectedUnits(selectedSimulation.delta_t,
+                UnitType.TIME)}}</div>
+              } @else {
+              <div class="simulation-input-field">
+                <input type="number" [(ngModel)]="createModifySimulation.delta_t">
+                <div class="unit">{{getSelectedUnitSymbol(UnitType.TIME)}}</div>
+              </div>
+              }
             </div>
             <div class="label-value">
               <div class="label">{{'simulation.writingRate' | translate}}:</div>
-              <div class="value">{{this.selectedSimulation.writingRate}} {{'simulation.iterationPerDataPoint' | translate}}</div>
+              @if (!isEditionMode()) {
+              <div class="value">{{selectedSimulation.writingRate}} {{'simulation.iterationPerDataPoint' | translate}}
+              </div>
+              } @else {
+              <div class="simulation-input-field">
+                <input type="number" [(ngModel)]="createModifySimulation.writingRate">
+                <div class="unit">{{'simulation.iterationPerDataPoint' | translate}}</div>
+              </div>
+              }
             </div>
             <div class="action-buttons">
-              <button mat-flat-button disabled="{{!this.selectedSimulation.isDirty}}">{{'simulation.button.run' | translate}}</button>
-              <button mat-stroked-button>{{'simulation.button.edit' | translate}}</button>
-              <button mat-stroked-button>{{'simulation.button.new' | translate}}</button>
+              <button mat-flat-button
+                disabled="{{!this.selectedSimulation.isDirty || this.isEditionMode()}}">{{'simulation.button.run' |
+                translate}}</button>
+              @if (!isEditionMode()) {
+              <button mat-stroked-button (click)="onClickNewEdit(false)">{{'simulation.button.edit' |
+                translate}}</button>
+              <button mat-stroked-button (click)="onClickNewEdit(true)">{{'simulation.button.new' |
+                translate}}</button>
+              } @else {
+              <button mat-stroked-button (click)="cancelCreateModify()">{{'simulation.button.cancel' |
+                translate}}</button>
+              <button mat-flat-button disabled="{{this.isSaveDisabled()}}"
+                (click)="saveSimulation(isCreateMode)">{{'simulation.button.save' | translate}}</button>
+              }
             </div>
           </div>
           <div class="units">
             <div class="distance">
               <div class="label">{{'simulation.unit.distanceUnit' | translate}}:</div>
-              <mat-radio-group
-                class="unit-radio-group"
-                [value]="distanceUnits[0].id"
-                (ngModel)="selectedDistanceUnit"
+              <mat-radio-group class="unit-radio-group" [value]="distanceUnits[0].id" (ngModel)="selectedDistanceUnit"
                 (change)="onSelectedDistanceUnitChange($event.value)">
                 @for (distanceUnit of distanceUnits; track distanceUnit) {
-                  <mat-radio-button class="unit-radio-button"[value]="distanceUnit.id">{{(distanceUnit.i18n + '.label') | translate}}</mat-radio-button>
+                <mat-radio-button class="unit-radio-button" [value]="distanceUnit.id">{{(distanceUnit.i18n + '.label') |
+                  translate}}</mat-radio-button>
                 }
               </mat-radio-group>
             </div>
             <div class="time">
               <div class="label">{{'simulation.unit.timeUnit' | translate}}:</div>
-              <mat-radio-group
-                class="unit-radio-group" 
-                [value]="timeUnits[0].id"
-                (ngModel)="selectedTimeUnit"
+              <mat-radio-group class="unit-radio-group" [value]="timeUnits[0].id" (ngModel)="selectedTimeUnit"
                 (change)="onSelectedTimeUnitChange($event.value)">
                 @for (timeUnit of timeUnits; track timeUnit) {
-                  <mat-radio-button class="unit-radio-button" [value]="timeUnit.id">{{(timeUnit.i18n + '.label') | translate}}</mat-radio-button>
+                <mat-radio-button class="unit-radio-button" [value]="timeUnit.id">{{(timeUnit.i18n + '.label') |
+                  translate}}</mat-radio-button>
                 }
               </mat-radio-group>
             </div>
           </div>
         </div>
-        @if (this.selectedSimulation.celestialObjects.length) {
+        @if (selectedSimulation.celestialObjects.length) {
         <mat-accordion>
-          @for (c of this.selectedSimulation.celestialObjects; track c) {
-          <mat-expansion-panel>
+          @for (c of isEditionMode() ? createModifySimulation.celestialObjects : selectedSimulation.celestialObjects;
+          track c) {
+          <mat-expansion-panel disabled="{{this.isEditionMode()}}">
             <mat-expansion-panel-header>
+              ­@if (!isEditionMode()) {
               <mat-panel-title>{{c.name}}</mat-panel-title>
-              <div class="celestial-object-data">
+              } @else {
+              <div class="label-value celestial-object-name">
+                <div class="label">{{'simulation.celestialObject.name' | translate}}:</div>
+                <div class="celestial-object-input-field">
+                  <input type="string" [(ngModel)]="c.name">
+                </div>
+              </div>
+              }
+              <div class="celestial-object-data ">
                 <div class="row">
                   <div class="label-value">
                     <div class="label">{{'simulation.celestialObject.mass' | translate}}:</div>
+                    ­@if (!isEditionMode()) {
                     <div>{{scientificNotation(c.mass)}} Kg</div>
+                    } @else {
+                    <div class="celestial-object-input-field">
+                      <input type="number" [(ngModel)]="c.mass">
+                      <div>Kg</div>
+                    </div>
+                    }
                   </div>
                   <div class="label-value">
                     <div class="label">{{'simulation.celestialObject.initialPosition' | translate}}:</div>
@@ -91,15 +152,39 @@
                   <div class="vector">
                     <div class="label-value">
                       <div class="label">X:</div>
+                      @if (!isEditionMode()) {
                       <div>{{scientificNotationConvertFromSelectedUnits(c.position.x, UnitType.DISTANCE)}}</div>
+                      } @else {
+                      <div class="celestial-object-input-field">
+                        <input type="number" [(ngModel)]="c.position.x"
+                          (ngModelChange)="normalizeSimulationData(createModifySimulation)">
+                        <div class="unit">{{getSelectedUnitSymbol(UnitType.DISTANCE)}}</div>
+                      </div>
+                      }
                     </div>
                     <div class="label-value">
                       <div class="label">Y:</div>
+                      @if (!isEditionMode()) {
                       <div>{{scientificNotationConvertFromSelectedUnits(c.position.y, UnitType.DISTANCE)}}</div>
+                      } @else {
+                      <div class="celestial-object-input-field">
+                        <input type="number" [(ngModel)]="c.position.y"
+                          (ngModelChange)="normalizeSimulationData(createModifySimulation)">
+                        <div class="unit">{{getSelectedUnitSymbol(UnitType.DISTANCE)}}</div>
+                      </div>
+                      }
                     </div>
                     <div class="label-value">
                       <div class="label">Z:</div>
+                      @if (!isEditionMode()) {
                       <div>{{scientificNotationConvertFromSelectedUnits(c.position.z, UnitType.DISTANCE)}}</div>
+                      } @else {
+                      <div class="celestial-object-input-field">
+                        <input type="number" [(ngModel)]="c.position.z"
+                          (ngModelChange)="normalizeSimulationData(createModifySimulation)">
+                        <div class="unit">{{getSelectedUnitSymbol(UnitType.DISTANCE)}}</div>
+                      </div>
+                      }
                     </div>
                   </div>
                 </div>
@@ -110,40 +195,74 @@
                   <div class="vector">
                     <div class="label-value">
                       <div class="label">X:</div>
+                      @if (!isEditionMode()) {
                       <div>{{scientificNotationConvertFromSelectedUnits(c.velocity.x, UnitType.VELOCITY)}}</div>
+                      } @else {
+                      <div class="celestial-object-input-field">
+                        <input type="number" [(ngModel)]="c.velocity.x"
+                          (ngModelChange)="normalizeSimulationData(createModifySimulation)">
+                        <div class="unit">{{getSelectedUnitSymbol(UnitType.VELOCITY)}}</div>
+                      </div>
+                      }
                     </div>
                     <div class="label-value">
                       <div class="label">Y:</div>
+                      @if (!isEditionMode()) {
                       <div>{{scientificNotationConvertFromSelectedUnits(c.velocity.y, UnitType.VELOCITY)}}</div>
+                      } @else {
+                      <div class="celestial-object-input-field">
+                        <input type="number" [(ngModel)]="c.velocity.y"
+                          (ngModelChange)="normalizeSimulationData(createModifySimulation)">
+                        <div class="unit">{{getSelectedUnitSymbol(UnitType.VELOCITY)}}</div>
+                      </div>
+                      }
                     </div>
                     <div class="label-value">
                       <div class="label">Z:</div>
+                      @if (!isEditionMode()) {
                       <div>{{scientificNotationConvertFromSelectedUnits(c.velocity.z, UnitType.VELOCITY)}}</div>
+                      } @else {
+                      <div class="celestial-object-input-field">
+                        <input type="number" [(ngModel)]="c.velocity.z"
+                          (ngModelChange)="normalizeSimulationData(createModifySimulation)">
+                        <div class="unit">{{getSelectedUnitSymbol(UnitType.VELOCITY)}}</div>
+                      </div>
+                      }
                     </div>
                   </div>
                 </div>
               </div>
             </mat-expansion-panel-header>
+            @if (!isEditionMode()) {
             <table mat-table [dataSource]="c.positionHistory" class="mat-elevation-z8">
               <ng-container matColumnDef="Time">
-                <th mat-header-cell *matHeaderCellDef> {{'simulation.time' | translate}} ({{(this.selectedTimeUnit.i18n + '.symbol') | translate}}) </th>
-                <td class="align-right" mat-cell *matCellDef="let element"> {{scientificNotationConvertFromSelectedUnits(element.time, UnitType.TIME, true)}} </td>
+                <th class="align-right" mat-header-cell *matHeaderCellDef> {{'simulation.time' | translate}}
+                  ({{(selectedTimeUnit.i18n + '.symbol') | translate}}) </th>
+                <td class="align-right" mat-cell *matCellDef="let element">
+                  {{scientificNotationConvertFromSelectedUnits(element.time, UnitType.TIME, true)}} </td>
               </ng-container>
               <ng-container matColumnDef="X">
-                <th mat-header-cell *matHeaderCellDef> X ({{(this.selectedDistanceUnit.i18n + '.symbol') | translate}}) </th>
-                <td class="align-right" mat-cell *matCellDef="let element"> {{scientificNotationConvertFromSelectedUnits(element.position.x, UnitType.DISTANCE, true)}} </td>
+                <th class="align-right" mat-header-cell *matHeaderCellDef> X ({{(selectedDistanceUnit.i18n + '.symbol')
+                  | translate}}) </th>
+                <td class="align-right" mat-cell *matCellDef="let element">
+                  {{scientificNotationConvertFromSelectedUnits(element.position.x, UnitType.DISTANCE, true)}} </td>
               </ng-container>
               <ng-container matColumnDef="Y">
-                <th mat-header-cell *matHeaderCellDef>  Y ({{(this.selectedDistanceUnit.i18n + '.symbol') | translate}}) </th>
-                <td class="align-right" mat-cell *matCellDef="let element"> {{scientificNotationConvertFromSelectedUnits(element.position.y, UnitType.DISTANCE, true)}} </td>
+                <th class="align-right" mat-header-cell *matHeaderCellDef> Y ({{(selectedDistanceUnit.i18n + '.symbol')
+                  | translate}}) </th>
+                <td class="align-right" mat-cell *matCellDef="let element">
+                  {{scientificNotationConvertFromSelectedUnits(element.position.y, UnitType.DISTANCE, true)}} </td>
               </ng-container>
               <ng-container matColumnDef="Z">
-                <th mat-header-cell *matHeaderCellDef> Z ({{(this.selectedDistanceUnit.i18n + '.symbol') | translate}}) </th>
-                <td class="align-right" mat-cell *matCellDef="let element"> {{scientificNotationConvertFromSelectedUnits(element.position.z, UnitType.DISTANCE, true)}} </td>
+                <th class="align-right" mat-header-cell *matHeaderCellDef> Z ({{(selectedDistanceUnit.i18n + '.symbol')
+                  | translate}}) </th>
+                <td class="align-right" mat-cell *matCellDef="let element">
+                  {{scientificNotationConvertFromSelectedUnits(element.position.z, UnitType.DISTANCE, true)}} </td>
               </ng-container>
               <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
               <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
             </table>
+            }
           </mat-expansion-panel>
           }
         </mat-accordion>

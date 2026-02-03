@@ -10,6 +10,7 @@ export class AppService {
 
   simulationCelestialObjects$ = new Subject<any>();
 
+
   getSimulationCelestialObjects() {
     return this.simulationCelestialObjects$.asObservable();
   }
