@@ -14,7 +14,8 @@
             "edit": "Edit",
             "new": "New",
             "cancel": "Cancel",
-            "save": "Save"
+            "save": "Save",
+            "add": "Add"
         },
         "unit": {
             "distanceUnit": "Distance unit",

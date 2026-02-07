@@ -79,6 +79,7 @@ body {
   }
 
   mat-card {
+    margin: 0 0 16px 0;
     mat-card-header {
       display: flex;
       justify-content: space-between;
@@ -244,4 +245,8 @@ body {
 
 label {
   margin-right: 10px;
+}
+
+.button-add {
+  padding: 16px 0 16px 16px;
 }

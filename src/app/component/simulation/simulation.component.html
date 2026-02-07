@@ -1,5 +1,4 @@
 <div class="simulation">
-  {{selectedSimulation.isDirty}}
   <div class="scene">
     <div class="cube">
       <div class="cube__face cube__face--back coordinates"></div>
@@ -8,7 +7,8 @@
       <div class="playground">
         @for (o of isEditionMode() ? createModifySimulation.celestialObjects : selectedSimulation.celestialObjects;
         track o) {
-        <app-circle [celestialObject]="o" [isAnimationPaused]="(isEditionMode() || selectedSimulation.isDirty)"></app-circle>
+        <app-circle [celestialObject]="o"
+          [isAnimationPaused]="(isEditionMode() || selectedSimulation.isDirty)"></app-circle>
         }
       </div>
     </div>
@@ -34,7 +34,7 @@
             <div class="label-value">
               <div class="label">{{'simulation.title' | translate}}:</div>
               @if (!isEditionMode()) {
-                <div class="value">{{selectedSimulation.title}}</div>
+              <div class="value">{{selectedSimulation.title}}</div>
               } @else {
               <div class="simulation-input-field">
                 <input type="string" [(ngModel)]="createModifySimulation.title">
@@ -78,9 +78,10 @@
               }
             </div>
             <div class="action-buttons">
-              <button mat-flat-button
+              <button mat-flat-button (click)="runSimulation()"
                 disabled="{{!this.selectedSimulation.isDirty || this.isEditionMode()}}">{{'simulation.button.run' |
-                translate}}</button>
+                translate}}
+              </button>
               @if (!isEditionMode()) {
               <button mat-stroked-button (click)="onClickNewEdit(false)">{{'simulation.button.edit' |
                 translate}}</button>
@@ -127,6 +128,9 @@
               <mat-panel-title>{{c.name}}</mat-panel-title>
               } @else {
               <div class="label-value celestial-object-name">
+                <button mat-icon-button (click)="deleteCelestialObject($index)">
+                  <mat-icon>delete</mat-icon>
+                </button>
                 <div class="label">{{'simulation.celestialObject.name' | translate}}:</div>
                 <div class="celestial-object-input-field">
                   <input type="string" [(ngModel)]="c.name">
@@ -268,6 +272,11 @@
         </mat-accordion>
         }
       </mat-card-content>
+      }
+      @if (isEditionMode()) {
+        <div class="button-add">
+          <button mat-flat-button (click)="onClickAdd()">{{'simulation.button.add' | translate}}</button>
+        </div>
       }
     </mat-card>
   </div>

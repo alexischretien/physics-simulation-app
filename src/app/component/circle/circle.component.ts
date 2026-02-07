@@ -62,12 +62,12 @@ export class CircleComponent {
   getAnimations(): AnimationMetadata[] {
     let positionInitiale = this.celestialObject.positionHistory[0].normalizedPosition
     let translateVectors: AnimationMetadata[] = []
-    translateVectors = translateVectors.concat(animate('0s', style({ opacity: 1, transform: 'translateX(' + positionInitiale?.x  + 'px) translateY(' + positionInitiale?.y  + 'px) translateZ(' + positionInitiale?.z + 'px)' })))
+    translateVectors = translateVectors.concat(animate('0s', style({ opacity: 1, transform: 'translateX(' + (-80 + positionInitiale.x)  + 'px) translateY(' + positionInitiale?.y  + 'px) translateZ(' + positionInitiale?.z + 'px)' })))
 
     if (!this.isAnimationPaused) {
       for (let i = 1 ; i < this.celestialObject.positionHistory.length ; ++i) {
         let position = this.celestialObject.positionHistory[i-1].normalizedPosition
-        translateVectors = translateVectors.concat(animate('0.1s', style({ opacity: 1, transform: 'translateX(' + position?.x  + 'px) translateY(' + position?.y  + 'px) translateZ(' + position?.z + 'px)' })))
+        translateVectors = translateVectors.concat(animate('0.1s', style({ opacity: 1, transform: 'translateX(' + (-80 + position?.x)  + 'px) translateY(' + position?.y  + 'px) translateZ(' + position?.z + 'px)' })))
       }
     }
     return translateVectors;

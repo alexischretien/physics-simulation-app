@@ -28,4 +28,8 @@ export class ApiService {
   patchSimulation(simulation: Simulation): Observable<any> {
     return this.http.patch(`${this.baseUrl}/simulations/` + simulation.id, simulation) 
   }
+
+  runSimulation(id: Number): Observable<any> {
+    return this.http.get(`${this.baseUrl}/simulations/${id}/run`, {responseType: 'blob'})
+  }
 }

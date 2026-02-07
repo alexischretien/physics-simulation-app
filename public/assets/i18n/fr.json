@@ -14,7 +14,8 @@
             "edit": "Éditer",
             "new": "Nouveau",
             "cancel": "Annuler",
-            "save": "Sauvegarder"
+            "save": "Sauvegarder",
+            "add": "Ajouter"
         },
         "unit": {
             "distanceUnit": "Unité de distance",

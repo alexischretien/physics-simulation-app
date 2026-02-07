@@ -17,7 +17,7 @@ import { AppService } from '../../service/app-service';
 
 
 
-const SCENE_SCALE = 400
+const SCENE_SCALE = 460
 const SUPERSCRIPT_ARRAY = [['0','⁰'],['1','¹'],['2','²'],['3','³'],['4','⁴'],['5','⁵'],
     ['6','⁶'],['7','⁷'],['8','⁸'],['9','⁹'],['-','⁻'],['8','⁸'],['+', '']]
 
@@ -107,7 +107,7 @@ export class SimulationComponent {
   normalizeSimulationData(simulation: Simulation): Simulation {
     if (simulation.celestialObjects?.length > 0) {
       if (simulation.isDirty) {
-        simulation.celestialObjects.forEach(c => c.positionHistory = [{time: 0, position: {x: c.position.x, y: c.position.y, z: c.position.z}}])
+        simulation.celestialObjects.forEach(c => c.positionHistory = [{time: 0, position: {x: c.position.x, y: c.position.y, z: c.position.z}, normalizedPosition: new Vector()}])
       }
       let max = this.findMaxPositionValues(simulation.celestialObjects);
       let min = this.findMinPositionValues(simulation.celestialObjects);
@@ -212,7 +212,6 @@ export class SimulationComponent {
     this.createModifySimulation.celestialObjects
     this.isCreateMode = isCreate
     this.isModifyMode = !isCreate
-   // this.appService.destroySimulationAnimation()
   }
 
   cancelCreateModify() {
@@ -269,5 +268,33 @@ export class SimulationComponent {
     this.isModifyMode = false
   }
 
+
+  runSimulation() {
+    if (this.selectedSimulation.isDirty && !this.isEditionMode()) {
+       this.apiService.runSimulation(this.selectedSimulation.id).subscribe({
+          next: () => {
+            console.log("next")
+            this.selectSimulationById(this.selectedSimulation.id)
+          } ,
+          error: (error) => {
+            console.log("error")
+            console.error(error);
+          }
+        });
+        console.log("end")
+    }
+  }
+
+  onClickAdd() {
+    if (this.isEditionMode()) {
+      this.createModifySimulation.celestialObjects = this.createModifySimulation.celestialObjects.concat(new CelestialObject())
+    }
+  }
+
+  deleteCelestialObject(index: number) {
+    if (this.isEditionMode()) {
+      this.createModifySimulation.celestialObjects.splice(index, 1)
+    }
+  }
 }
 export { UnitType };

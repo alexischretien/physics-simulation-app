@@ -30,7 +30,7 @@ export class PositionHistory {
     celestialObjectId?: number
     time: number = 0
     position: Vector = {x: 0, y: 0, z: 0}
-    normalizedPosition?: Vector
+    normalizedPosition: Vector = {x: 0, y: 0, z: 0}
 }
 
 export enum UnitType {
